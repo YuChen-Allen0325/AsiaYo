@@ -23,7 +23,7 @@ CONF = {
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'when': 'midnight',
             'backupCount': 2,
-            'filename': 'unno-tech-api.log',
+            'filename': 'AsiaYo-api.log',
         }
     },
     'loggers': {
