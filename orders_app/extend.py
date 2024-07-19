@@ -43,6 +43,10 @@ class InputValidationDecorator(ExtendDecorator):  ## 檢查傳入值是否符合
             
             if type(price).__name__ != 'str':
                 return Response("price must be a string", status=400)
+            else:
+                for p in price:
+                    if not (ord(p) >= 48 and ord(p) <= 57):
+                        return Response("price must be numeric", status=400)
             
             if type(currency).__name__ != 'str':
                 return Response("currency must be a string", status=400)

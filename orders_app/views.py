@@ -27,8 +27,16 @@ class OrdersValidationView(APIView):  ## 繼承APIView 不需檢查Http Method, 
         if valid_name.get('msg') == "Name is not capitalized":
             return Response("Name is not capitalized", status=400)
 
-        currency_ins = OrdersCurrencyPrinciple(currency)
+        currency_ins = OrdersCurrencyPrinciple(currency, price)
         valid_currency = currency_ins.func()
 
+        if valid_currency.get('msg') == "Currency format is wrong":
+            return Response("Currency format is wrong", status=400)
 
-        return Response({'message': 'success', "payload": payload}, status=200)
+        price_ins = OrdersPricePrinciple(currency_ins.price)   ## 傳入轉換後的price
+        valid_price = price_ins.func()
+
+        if valid_price.get('msg') == "Price is over 2000":
+            return Response("Price is over 2000", status=400)
+
+        return Response("Order is valid", status=200)

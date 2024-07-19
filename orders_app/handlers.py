@@ -43,17 +43,30 @@ class OrdersNamePrinciple(Principle):
                 
         return {}
 
+
 class OrdersPricePrinciple(Principle):   ##  最後檢查價格
     def __init__(self, price):
         self.price = price
         
     def func(self):
-        pass
+        if int(self.price) > 2000:
+            return {"msg":"Price is over 2000"}
 
+        return {}
+    
 
 class OrdersCurrencyPrinciple(Principle):
-    def __init__(self, currency):
+    def __init__(self, currency, price):
         self.currency = currency
+        self.price = price
 
     def func(self):
-        pass
+        
+        if self.currency not in ["USD", "TWD"]:
+            return {"msg":"Currency format is wrong"}
+        
+        if self.currency == "USD":
+            self.price = str(int(self.price) * 31)
+            self.currency = "TWD"
+        
+        return {}
