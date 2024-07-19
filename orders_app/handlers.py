@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from rest_framework.response import Response
+
 
 class Principle(ABC):
     @abstractmethod
@@ -56,9 +58,9 @@ class OrdersPricePrinciple(Principle):   ##  最後檢查價格
     
 
 class OrdersCurrencyPrinciple(Principle):
-    def __init__(self, currency, price):
+    def __init__(self, currency, price_principle: OrdersPricePrinciple):
         self.currency = currency
-        self.price = price
+        self.price_principle = price_principle
 
     def func(self):
         
@@ -66,7 +68,38 @@ class OrdersCurrencyPrinciple(Principle):
             return {"msg":"Currency format is wrong"}
         
         if self.currency == "USD":
-            self.price = str(int(self.price) * 31)
+            self.price_principle.price = str(int(self.price_principle.price) * 31)
             self.currency = "TWD"
         
         return {}
+    
+class OrdersValidation:
+    def __init__(self, name_principle: OrdersNamePrinciple, price_principle: OrdersPricePrinciple, currency_principle: OrdersCurrencyPrinciple):
+        self.name_principle = name_principle
+        self.price_principle = price_principle
+        self.currency_principle = currency_principle
+
+        self.name_non_english = False      ## True就是有錯誤
+        self.name_not_capitalized = False
+        self.currency_format = False
+        self.price_over = False
+    
+    def validate(self):
+
+        valid_name = self.name_principle.func()
+        valid_currency = self.currency_principle.func()
+        valid_price = self.price_principle.func()
+
+        if valid_name.get('msg') == "Name contains non-English characters":
+            self.name_non_english = True
+        
+        if valid_name.get('msg') == "Name is not capitalized":
+            self.name_not_capitalized = True
+
+        if valid_currency.get('msg') == "Currency format is wrong":
+            self.currency_format = True
+
+        if valid_price.get('msg') == "Price is over 2000":
+            self.price_over = True
+        
+        return
